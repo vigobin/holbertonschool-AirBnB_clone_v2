@@ -9,6 +9,11 @@ from sqlalchemy.orm import sessionmaker
 from models.base_model import Base
 from models.state import State
 from models.city import City
+from models.user import User
+from models.place import Place
+from models.amenity import Amenity
+from models.review import Review
+
 
 class DBStorage:
     """Database storage class"""
@@ -30,6 +35,7 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
+<<<<<<< HEAD
         classes = [State, City]
         object_list = {}
         if cls == None:
@@ -38,11 +44,23 @@ class DBStorage:
                 for j in obj:
                     object_list.update("{}.{}: {}".format(obj.__name__, j.id, j))
                                        
+=======
+        classes = ["User", "State", "City", "Amenity", "Place", "Review"]
+        object_dict = {}
+        if cls is None:
+            for clas in classes:
+                obj_list = self.__session.query(clas).all()
+                for obj in obj_list:
+                    object_dict.update("{}.{}: {}".format(
+                        type(obj).__name__, obj.id, obj))
+
+>>>>>>> 9e6e734ffa00189e42a65a163ba41adc98952fb7
         else:
             obj = self.__session.query(cls).all()
             for i in obj:
-                object_list.update("{}.{}: {}".format(type(cls).__name__, i.id, i))
-            return object_list
+                object_dict.update("{}.{}: {}".format(
+                    type(cls).__name__, i.id, i))
+            return object_dict
 
     def new(self, obj=None):
         self.__session.add(obj)
@@ -56,6 +74,5 @@ class DBStorage:
 
     def reload(self):
         Base.metadata.create_all(self.__engine)
-        self.__session = scoped_session(sessionmaker(bind=self.__engine, expire_on_commit=False))
-
-    
+        self.__session = scoped_session(sessionmaker(
+            bind=self.__engine, expire_on_commit=False))
