@@ -27,7 +27,7 @@ class DBStorage:
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
             user, password, host, database), pool_pre_ping=True)
         if env == "test":
-            Base.metadata.drop_all()
+            Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         classes = ["User", "State", "City", "Amenity", "Place", "Review"]
@@ -36,12 +36,12 @@ class DBStorage:
             for i in classes:
                 obj = self.__session.query(i)
                 for j in obj:
-                    object_list.update("{}.{}: {}".format(obj, j.id, j.__str__()))
+                    object_list.update("{}.{}: {}".format(type(obj).__name__, j.id, j))
                                        
         else:
-            obj = self.__session.query(cls)
+            obj = self.__session.query(cls).all()
             for i in obj:
-                object_list.update("{}.{}: {}".format(cls, obj.id, obj.__str__()))
+                object_list.update("{}.{}: {}".format(type(cls).__name__, i.id, i))
             return object_list
 
     def new(self, obj=None):
@@ -55,7 +55,7 @@ class DBStorage:
             self.__session.delete(obj)
 
     def reload(self):
-        Base.metadata.create_all(DBStorage)
+        Base.metadata.create_all(self.__engine)
         self.__session = scoped_session(sessionmaker(bind=self.__engine, expire_on_commit=False))
 
     
