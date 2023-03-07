@@ -3,14 +3,14 @@
 import cmd
 import sys
 from models.base_model import BaseModel
-from models.__init__ import storage
+#from models.__init__ import storage
 from models.user import User
 from models.place import Place
 from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-
+from models import storage
 
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
@@ -114,6 +114,7 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
+        
         """ Create an object of any class"""
         args = args.split(" ")
         if not args:
@@ -128,9 +129,11 @@ class HBNBCommand(cmd.Cmd):
             part = args[i].partition('=')
             new_instance.__dict__.update({part[0].replace('"', ''): part[2].replace('"', '').replace('_', ' ')})
 
-        storage.save()
+        storage.new(new_instance)
+        #storage.save()
         print(new_instance.id)
-        storage.save()
+        #storage.save()
+        new_instance.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -161,7 +164,7 @@ class HBNBCommand(cmd.Cmd):
 
         key = c_name + "." + c_id
         try:
-            print(storage.all())
+            print(storage._FileStorage__objects[key])
         except KeyError:
             print("** no instance found **")
 
@@ -299,7 +302,7 @@ class HBNBCommand(cmd.Cmd):
             args = [att_name, att_val]
 
         # retrieve dictionary of current objects
-        new_dict = storage.all()
+        new_dict = storage.all()[key]
 
         # iterate through attr names and values
         for i, att_name in enumerate(args):

@@ -36,11 +36,11 @@ class DBStorage:
 
     def all(self, cls=None):
 
-        classes = ["User", "State", "City", "Amenity", "Place", "Review"]
+        classes = {"User": User, "State": State, "City": City, "Amenity": Amenity, "Place": Place, "Review": Review}
         object_dict = {}
         if cls is None:
-            for clas in classes:
-                obj_list = self.__session.query(clas).all()
+            for clas in classes.values():
+                obj_list = self.__session.query(clas)
                 for obj in obj_list:
                     object_dict.update("{}.{}: {}".format(
                         type(obj).__name__, obj.id, obj))
@@ -50,13 +50,13 @@ class DBStorage:
             for i in obj:
                 object_dict.update("{}.{}: {}".format(
                     type(cls).__name__, i.id, i))
-            return object_dict
+        return object_dict
 
     def new(self, obj=None):
         self.__session.add(obj)
 
     def save(self):
-        self.__session.save()
+        self.__session.commit()
 
     def delete(self, obj=None):
         if obj is not None:
