@@ -30,13 +30,13 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        classes = ["User", "State", "City", "Amenity", "Place", "Review"]
+        classes = [State, City]
         object_list = {}
         if cls == None:
             for i in classes:
                 obj = self.__session.query(i)
                 for j in obj:
-                    object_list.update("{}.{}: {}".format(type(obj).__name__, j.id, j))
+                    object_list.update("{}.{}: {}".format(obj.__name__, j.id, j))
                                        
         else:
             obj = self.__session.query(cls).all()
