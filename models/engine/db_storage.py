@@ -36,8 +36,7 @@ class DBStorage:
 
     def all(self, cls=None):
 
-        classes = {"User": User, "State": State, "City": City,
-                   "Amenity": Amenity, "Place": Place, "Review": Review}
+        classes = {"User": User, "State": State, "City": City, "Amenity": Amenity, "Place": Place, "Review": Review}
         object_dict = {}
         if cls is None:
             for clas in classes.values():
