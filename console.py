@@ -128,7 +128,9 @@ class HBNBCommand(cmd.Cmd):
         new_instance = HBNBCommand.classes[args[0]]()
         for i in range(1, len(args)):
             part = args[i].partition('=')
-            new_instance.__dict__.update({part[0].replace('"', ''): part[2].replace('"', '').replace('_', ' ')})
+            new_instance.__dict__.update({part[0].replace('"', ''):
+                                          part[2].replace('"', '').
+                                          replace('_', ' ')})
 
         storage.new(new_instance)
         # storage.save()
