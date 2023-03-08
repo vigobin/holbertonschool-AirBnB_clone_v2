@@ -14,7 +14,7 @@ class State(BaseModel, Base):
 
     if type_storage == 'db':
         cities = relationship('City', cascade='all, delete',
-                              back_populates='state')
+                              backref='state')
 
     else:
         @property
