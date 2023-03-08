@@ -1,10 +1,22 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, ForeignKey, Integer, Float
+from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from sqlalchemy.orm import relationship
 from os import getenv
 from models.review import Review
+import models
+
+place_amenity = Table('place_amenity',
+                      Base.metadata,
+                      Column('place_id', String(60),
+                             ForeignKey('places.id'),
+                             primary_key=True,
+                             nullable=False),
+                      Column('amenity_id', String(60),
+                             ForeignKey('amenities.id'),
+                             primary_key=True,
+                             nullable=False))
 
 
 class Place(BaseModel, Base):
@@ -22,16 +34,40 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     amenity_ids = []
 
-type_storage = getenv("HBNB_TYPE_STORAGE")
-if type_storage == "db":
-    reviews = relationship('Review', cascade="all, delete, delete-orphan", backref="place")
-else:
-    @property
-    def reviews(self):
-        from models import storage
-        new_list = []
-        revi = storage.all(Review).values()
-        for i in revi:
-            if i.place_id == self.id:
-                new_list.append(i)
-        return new_list
+    type_storage = getenv("HBNB_TYPE_STORAGE")
+    if type_storage == "db":
+        reviews = relationship('Review', cascade="all, delete, delete-orphan",
+                               backref="place")
+        amenities = relationship('Amenity', secondary='place_amenity',
+                                 backref='place_amenities',
+                                 viewonly=False)
+    else:
+        @property
+        def reviews(self):
+            from models import storage
+            new_list = []
+            revi = storage.all(Review).values()
+            for i in revi:
+                if i.place_id == self.id:
+                    new_list.append(i)
+            return new_list
+
+        @property
+        def amenities(self):
+            """Amenity getter"""
+            from models.amenity import Amenity
+            from models import storage
+            amenity_list = []
+            ameni = storage.all(Amenity).values()
+            for i in ameni:
+                if i.place_id == self.id:
+                    amenity_list.append(i)
+            return amenity_list
+
+        @amenities.setter
+        def amenities(self, amenity_list):
+            """Amenity setter"""
+            from models.amenity import Amenity
+            for i in amenity_list:
+                if type(i) == Amenity:
+                    self.amenity_ids.append(i)
