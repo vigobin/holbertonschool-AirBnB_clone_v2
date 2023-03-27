@@ -35,6 +35,7 @@ def python(text='is cool'):
 def is_number(n):
     return ('{} is a number'.format(n))
 
+
 @app.route('/number_template/<int:n>', strict_slashes=False)
 def num_template(n=None):
     """number template"""
