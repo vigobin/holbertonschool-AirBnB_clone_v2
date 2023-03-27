@@ -57,7 +57,7 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
-        """delete obj from __objects if it’s inside - if obj is equal to None,
+        """Delete obj from __objects if it’s inside - if obj is equal to None,
         the method should not do anything"""
         if obj is None:
             pass
@@ -66,5 +66,5 @@ class FileStorage:
                 del FileStorage.__objects[key]
 
     def close(self):
-        """deserializing JSON"""
+        """Deserializing JSON"""
         self.reload()
