@@ -36,24 +36,19 @@ class DBStorage:
 
     def all(self, cls=None):
         """All function"""
-
-        classes = {"User": User, "State": State,
-                   "City": City, "Amenity": Amenity,
-                   "Place": Place, "Review": Review}
-        object_dict = {}
+        cls_list = ["Reviews", "City", "State", "User",
+                    "Place", "Amenity"]
+        obj_list = []
         if cls is None:
-            for clas in classes.values():
-                obj_list = self.__session.query(clas)
-                for obj in obj_list:
-                    object_dict.update("{}.{}: {}".format(
-                        type(obj).__name__, obj.id, obj))
+            for cls_name in cls_list:
+                obj_list.extend(self.__session.query(cls_name).all())
 
         else:
-            obj = self.__session.query(cls).all()
-            for i in obj:
-                object_dict.update("{}.{}: {}".format(
-                    type(cls).__name__, i.id, i))
-        return object_dict
+            if type(cls) == str:
+                cls = eval(cls)
+            obj_list = self.__session.query(cls).all()
+        return {"{}.{}".format(type(obj).__name__,
+                               obj.id): obj for obj in obj_list}
 
     def new(self, obj=None):
         """New function"""
